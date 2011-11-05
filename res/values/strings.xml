@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, InventoryActivity!</string>
     <string name="app_name">FarmTab</string>
+    <string name="cart_title">Checkout</string>
+    <string name="no_items">No items</string>
 </resources>
