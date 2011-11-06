@@ -66,8 +66,9 @@ public class InventoryActivity extends Activity {
 	    
 	    mPreferences = getPreferences(MODE_PRIVATE);
 	    
-	    // TODO: for demo only
+	    /* TODO: for demo only */
 	    Preferences.storePrefs(mPreferences.edit(), "1", "123abc", true);
+	    
 	    
 	    mItems = fetchInventory();
 	    
@@ -126,6 +127,20 @@ public class InventoryActivity extends Activity {
         // even if we fail, at least return an empty list
         ArrayList<InventoryItem> data = new ArrayList<InventoryItem>();
         
+
+        
+        
+        
+        /* TODO: For test */
+        InventoryItem i = new InventoryItem("Pumpkin");
+        
+        data.add(i);
+        
+        
+        
+        
+        
+        /*
         HttpClient client = new DefaultHttpClient();
         HttpPost httpPost = new HttpPost(INVENTORY_API_URL);;
         
@@ -167,7 +182,7 @@ public class InventoryActivity extends Activity {
                 // de-allocate when we're done with it
                 client.getConnectionManager().shutdown();
         }
-                
+           */     
         return data;
     }
     
@@ -213,8 +228,8 @@ public class InventoryActivity extends Activity {
 	    	Log.d(TAG, "Adding item: ");
 	    	JSONObject item = items.getJSONObject(i);
 	    	
-	    	InventoryItem ii = new InventoryItem(FarmTab.context());
-	    	ii.setURL((String)item.get("imgurl"));
+	    	InventoryItem ii = new InventoryItem(item.getString("name"));
+	    	ii.setURL(item.getString("imgurl"));
 	    	
 	    	data.add(ii);
 	    }

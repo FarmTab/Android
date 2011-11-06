@@ -14,15 +14,17 @@ import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.View;
 
-public class InventoryItem extends View {
+public class InventoryItem {
 	private static String TAG = "InventoryItem";
 		
+	public String name;
+	public String description;
 	private URL imgurl;
-	private double quantity;
-	private String unit; // lbs, bushel, [empty, i.e. bare]
+	public String unit; // lbs, bushel, [empty, i.e. bare]
+	public boolean isWeight;
 
-	public InventoryItem(Context context) {
-		super(context);
+	public InventoryItem(String name) {
+		this.name = name;
 	}
 	
     /**
