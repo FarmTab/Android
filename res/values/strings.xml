@@ -3,4 +3,8 @@
     <string name="app_name">FarmTab</string>
     <string name="cart_title">Checkout</string>
     <string name="no_items">No items</string>
+    
+    <!-- Error codes -->
+    <string name="cant_connect">Cannot connect. Check your connection</string>
+   	<string name="server_503">Server is down or some other error. Please try again later.</string>
 </resources>

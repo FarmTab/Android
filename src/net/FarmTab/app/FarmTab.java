@@ -31,8 +31,8 @@ public class FarmTab extends Application {
 	private static Context mContext;
     
     public FarmTab() {
-            super.onCreate();
-    mContext = this;
+        super.onCreate();
+        mContext = this;
     }
     
     public static Context context() {

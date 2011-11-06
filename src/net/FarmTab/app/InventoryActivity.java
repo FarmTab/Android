@@ -17,18 +17,31 @@
 
 package net.FarmTab.app;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
+
+
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -41,12 +54,22 @@ import android.widget.GridView;
 public class InventoryActivity extends Activity {
 	private static final String TAG = "InventoryActivity";
 	
-	private ArrayList<InventoryItem> mItems;
+	private static final String INVENTORY_API_URL = "http://farmtab.net/delicious.php";
 	
-    @Override
+	private ArrayList<InventoryItem> mItems;
+	private SharedPreferences mPreferences;
+
+	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState); 
 	    setContentView(R.layout.icons_grid);
+	    
+	    mPreferences = getPreferences(MODE_PRIVATE);
+	    
+	    // TODO: for demo only
+	    Preferences.storePrefs(mPreferences.edit(), "1", "123abc", true);
+	    
+	    mItems = fetchInventory();
 	    
 	    GridView grid = (GridView) findViewById(R.id.itemsGrid);
 	    grid.setAdapter(new GridAdapter());
@@ -88,36 +111,115 @@ public class InventoryActivity extends Activity {
 	    }
 	}
 	
-	public class InventoryItem extends View {
-		
-		private URL imgurl;
+    /**
+     * Fetch and parse the inventory into an ArrayList.
+	 * 
+     * @return parsed feed
+     * @throws any human-readable Exception message
+     */
+    public ArrayList<InventoryItem> fetchInventory() throws FarmTabException {
+        Log.d(TAG, "fetchFeed()");
+        
+        if (!hasInternetConnectivity())
+                throw new FarmTabException(getString(R.string.cant_connect));
+
+        // even if we fail, at least return an empty list
+        ArrayList<InventoryItem> data = new ArrayList<InventoryItem>();
+        
+        HttpClient client = new DefaultHttpClient();
+        HttpPost httpPost = new HttpPost(INVENTORY_API_URL);;
+        
+        
+        List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+        pairs.add(new BasicNameValuePair("farmid", mPreferences.getString(Preferences.PREFERENCE_FARMID, "")));
+        pairs.add(new BasicNameValuePair("keycode", mPreferences.getString(Preferences.PREFERENCE_PRIVATEKEY, "")));
+                
+        
+        try {
+                httpPost.setEntity(new UrlEncodedFormEntity(pairs));
+                
+                Log.d(TAG, "executing response");
+                HttpResponse response = client.execute(httpPost);
+
+                int status = response.getStatusLine().getStatusCode();
+                Log.d(TAG, "response status: " + status);
+                
+                if (status == HttpStatus.SC_OK ) {
+                    data = parseJSON(response.getEntity().getContent());
+                } else { // encompases 503 (server down temporarily), 404, etc. we don't care, since we can't get data 
+                    Log.w(TAG, "Server down: " + status + " status code.");
+                    throw new FarmTabException(getString(R.string.server_503));
+                }
+                
+                if (data.size() == 0) 
+                    throw new FarmTabException(getString(R.string.cant_connect));
+                
+        } catch (FarmTabException e) {
+        	// we handle all of these, so we want the message passed along to the user
+            throw e;
+        } catch (ClientProtocolException e) {
+            Log.e(TAG, "Protocol error: " + e.getCause());                  
+            throw new FarmTabException(getString(R.string.cant_connect));
+        } catch (Exception e) {
+            // encompasses IOException, ParserConfigurationException, SAXException
+            e.printStackTrace();
+        } finally {
+                // de-allocate when we're done with it
+                client.getConnectionManager().shutdown();
+        }
+                
+        return data;
+    }
+    
+    public static boolean hasInternetConnectivity() {
+        Context context = FarmTab.context();         
+        /* NOT WORKING. Comment out for now.
+         NetworkInfo info = (NetworkInfo) ((ConnectivityManager) context
+        
+                .getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
+
+        if (info == null || !info.isConnected()) {
+            return false;
+        }
+        if (info.isRoaming()) {
+            // here is the roaming option you can change it if you want to
+            // disable internet while roaming, just return false
+            return false;
+        }
+        */
+        return true;
+    }
+    
+    public static ArrayList<InventoryItem> parseJSON(InputStream is) throws IOException, JSONException {
+    	ArrayList<InventoryItem> data = new ArrayList<InventoryItem>();
+    	
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is,"iso-8859-1"),8);
+        StringBuilder sb = new StringBuilder();
+        String line = null;
+
+        while ((line = reader.readLine()) != null) {
+            sb.append(line);
+	    }
+        
+	    is.close();
 	
-		public InventoryItem(Context context) {
-			super(context);
-		}
-		
-		
-		/*
-		 * Fetch image from the internet and return it
-		 */
-		public Drawable getImage() {
-		    Bitmap x = null;
-	
-		    try {
-			    HttpURLConnection connection = (HttpURLConnection)imgurl.openConnection();
-			    connection.setRequestProperty("User-agent","Mozilla/5.0 (Linux; U; Android 0.5; en-us)");
-				connection.connect();
-			    InputStream input = connection.getInputStream();
-			    x = BitmapFactory.decodeStream(input);
-			} catch (IOException e) {
-				Log.e(TAG, "Error fetching drawable for url " + imgurl + ", ");
-				e.printStackTrace();
-			}
-	
-			if (x != null)
-				return new BitmapDrawable(x);
-			else
-				return FarmTab.resources().getDrawable(R.drawable.item_missing_picture);
-		}
-	}
+	    String json = sb.toString();
+	    JSONObject object = (JSONObject) new JSONTokener(json).nextValue();
+	    
+	    JSONArray items = object.getJSONArray("items");
+	    Log.d(TAG, "Grabbed JSON object. Length: " + items.length());
+	    
+	    for (int i=0; i < items.length(); i++) {
+	    	Log.d(TAG, "Adding item: ");
+	    	JSONObject item = items.getJSONObject(i);
+	    	
+	    	InventoryItem ii = new InventoryItem(FarmTab.context());
+	    	ii.setURL((String)item.get("imgurl"));
+	    	
+	    	data.add(ii);
+	    }
+
+    	return data;
+    }
+
 }
