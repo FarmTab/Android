@@ -4,8 +4,9 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
-<TextView  
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content"
-    />
+    
+	<include layout="@layout/icons_grid" />
+	<include layout="@layout/checkout_list" />
+	
+
 </LinearLayout>

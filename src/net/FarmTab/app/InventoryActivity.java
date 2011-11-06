@@ -39,6 +39,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import android.R;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -53,6 +54,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
@@ -132,19 +134,32 @@ public class InventoryActivity extends Activity {
 			
 		}
 	
-	    public View getView(int position, View convertView, ViewGroup parent) {
-		//create a basic imageview here or inflate a complex layout with
-		//getLayoutInflator().inflate(R.layout...)
-	        View item = new View(InventoryActivity.this);
-	
-	        //item.setImageResource(mItems.get(position).getImage());
-	        final int w = (int) (36 * getResources().getDisplayMetrics().density + 0.5f);
-	        item.setLayoutParams(new GridView.LayoutParams(w * 2, w * 2));
-	        return item;
-	    }
+	      @Override
+	      public View getView(int position, View convertView, ViewGroup parent)  {
+	         View MyView = convertView;
+	         
+	         if ( convertView == null ) {
+	                                /*we define the view that will display on the grid*/
+	            
+	            //Inflate the layout
+	            LayoutInflater li = getLayoutInflater();
+	            MyView = li.inflate(R.layout.grid_item, null);
+	            
+	            // Add The Text!!!
+	            TextView tv = (TextView)MyView.findViewById(R.id.grid_item_text);
+	            tv.setText(getItem(position).name);
+	            
+	            // Add The Image!!!           
+	            ImageView iv = (ImageView)MyView.findViewById(R.id.grid_item_image);
+	            iv.setImageDrawable(getItem(position).getImage());
+	         }
+	         
+	         return MyView;
+	      }
+
 	
 	    public final int getCount() {
-	        return mItems.size();
+	        return 9;
 	    }
 	
 	    public final InventoryItem getItem(int position) {
