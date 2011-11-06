@@ -21,10 +21,11 @@ public class InventoryItem {
 	public String description;
 	private URL imgurl;
 	public String unit; // lbs, bushel, [empty, i.e. bare]
-	public boolean isWeight;
+	public boolean isMeasuredByWeight; // as opposed to quantity
 
-	public InventoryItem(String name) {
+	public InventoryItem(String name, boolean isMeasuredByWeight) {
 		this.name = name;
+		this.isMeasuredByWeight = isMeasuredByWeight;
 	}
 	
     /**

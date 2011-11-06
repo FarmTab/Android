@@ -131,9 +131,10 @@ public class InventoryActivity extends Activity {
         
         
         
-        /* TODO: For test */
-        InventoryItem i = new InventoryItem("Pumpkin");
-        
+        /* TODO: Nur for test */
+        InventoryItem i = new InventoryItem("Pumpkin", true);
+        i.setURL("http://images.wikia.com/mariokart/images/4/45/Mkdd_giant_banana.jpg");
+        i.unit = "lbs";
         data.add(i);
         
         
@@ -228,7 +229,7 @@ public class InventoryActivity extends Activity {
 	    	Log.d(TAG, "Adding item: ");
 	    	JSONObject item = items.getJSONObject(i);
 	    	
-	    	InventoryItem ii = new InventoryItem(item.getString("name"));
+	    	InventoryItem ii = new InventoryItem(item.getString("name"), item.getBoolean("isMeasuredByWeight"));
 	    	ii.setURL(item.getString("imgurl"));
 	    	
 	    	data.add(ii);
