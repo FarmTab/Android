@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
+<!--  removed anroid:layout_weight="20" from linear layout attributes -->
  <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
          android:orientation="vertical"
-         anroid:layout_weight="20"
          android:layout_width="match_parent"
          android:layout_height="match_parent"
          android:paddingLeft="8dp"

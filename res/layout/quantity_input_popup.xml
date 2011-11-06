@@ -7,14 +7,12 @@
     android:orientation="vertical">
  
        <textview
-			style="@style/android:PageHeader"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:layout_centerhorizontal="true"
 			android:text="Transfering data">
  
 	       <textview
-				style="@style/android:Header"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_gravity="center_vertical"
@@ -25,7 +23,7 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:text="@string/enter_quantity" 
-					android:paddingleft="10sp">
+					android:paddingLeft="10sp">
 		 
 		       <linearlayout xmlns:android="http://schemas.android.com/apk/res/android"
 					android:layout_width="fill_parent"
@@ -35,9 +33,6 @@
 		 
 		       		<button
 						android:id="@+id/end_data_send_button"
-						style="@style/android:Button"
-						android:drawablepadding="3sp"
-						android:layout_centerhorizontal="true"
 						android:text="Cancel">
 		   
 					</button>
