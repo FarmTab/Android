@@ -31,11 +31,12 @@ public class InventoryItem {
      */
     public void setURL(String loc) {
         try {
-                imgurl = new URL(loc);
+            imgurl = new URL(loc);
+            return;
         } catch (MalformedURLException e) {
-                Log.e(TAG, "Bad URL: " + loc + "\n" + e.getMessage());
+            Log.e(TAG, "Bad URL: " + loc + "\n" + e.getMessage());
+            throw new FarmTabException();
         }
-        throw new FarmTabException();
     }
 	
 	

@@ -3,6 +3,10 @@
     <string name="app_name">FarmTab</string>
     <string name="cart_title">Checkout</string>
     <string name="no_items">No items</string>
+    <string name="enter">ok</string>
+    <string name="cancel">cancel</string>
+    <string name="enter_quantity">Enter quantity:</string>
+    
     
     <!-- Error codes -->
     <string name="cant_connect">Cannot connect. Check your connection</string>

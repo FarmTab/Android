@@ -44,12 +44,17 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.GridView;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 
 public class InventoryActivity extends Activity {
 	private static final String TAG = "InventoryActivity";
@@ -67,26 +72,65 @@ public class InventoryActivity extends Activity {
 	    mPreferences = getPreferences(MODE_PRIVATE);
 	    
 	    /* TODO: for demo only */
-	    Preferences.storePrefs(mPreferences.edit(), "1", "123abc", true);
+	    Preferences.storePrefs(mPreferences.edit(), "1", "OldMacDonald", true);
 	    
 	    
 	    mItems = fetchInventory();
 	    
 	    GridView grid = (GridView) findViewById(R.id.itemsGrid);
-	    grid.setAdapter(new GridAdapter());
+	    GridAdapter mAdapter = new GridAdapter();
+	    grid.setAdapter(mAdapter);
 	
 	    grid.setOnItemClickListener(new OnItemClickListener() {
 	        @Override
 	        public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 	                long arg3) {
-	            //do some stuff here on click
+	        	
+	        	InventoryItem item = new InventoryItem("pumpkin", true);
+	        	
+	            popupDialog(item);
 	        }
 	    });
 
     }
+	
+	void popupDialog(InventoryItem item) {
+		
+		PopupWindow pw;
+		/*
+		LayoutInflater inflater = (LayoutInflater) InventoryActivity.this
+        				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		
+		//Inflate the view from a predefined XML layout
+		View layout = inflater.inflate(R.layout.quantity_input_popup,
+		        (ViewGroup) findViewById(R.id.popup_element));
+		// create a 300px width and 470px height PopupWindow
+		pw = new PopupWindow(layout, 300, 470, true);
+		// display the popup in the center
+		pw.showAtLocation(layout, Gravity.CENTER, 0, 0);
+		
+		TextView mResultText = (TextView) layout.findViewById(R.id.scale_current_weight);
+		Button cancelButton = (Button) layout.findViewById(R.id.end_data_send_button);
+		cancelButton.setOnClickListener(new OnClickListener() {
+		    public void onClick(View v) {
+		        pw.dismiss();
+		    }
+		});
+		
+		*/
+		if (item.isMeasuredByWeight) {
+			// show scale interface
+		} else {
+			// show quantity interface
+		}
+	}
     
 	public class GridAdapter extends BaseAdapter {
 		private static final String TAG = "customAdapter";
+		
+		public GridAdapter() {
+			
+		}
 	
 	    public View getView(int position, View convertView, ViewGroup parent) {
 		//create a basic imageview here or inflate a complex layout with
